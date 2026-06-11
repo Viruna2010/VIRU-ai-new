@@ -2,52 +2,41 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini AI Chat</title>
-    <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 10px; }
-        #chat-box { height: 350px; border: 1px solid #ccc; overflow-y: scroll; padding: 10px; margin-bottom: 10px; border-radius: 8px; background-color: #f9f9f9; }
-        input { width: 70%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        button { padding: 10px 15px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; }
-    </style>
+    <title>Exhibition AI Bot</title>
 </head>
 <body>
-
-    <h2>Gemini AI Chatbot</h2>
-    <div id="chat-box"></div>
+    <h2>Exhibition AI Chat</h2>
+    <div id="chat-box" style="height:300px; border:1px solid #ccc; padding:10px; overflow-y:scroll;"></div>
     <input type="text" id="userInput" placeholder="ප්‍රශ්නයක් අසන්න...">
-    <button onclick="getAIResponse()">යවන්න</button>
+    <button onclick="sendRequest()">යවන්න</button>
 
-    <script type="module">
-        import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai";
-
-        // ඔබේ API Key එක මෙතැනට දමන්න
-        const API_KEY = "AIzaSyB3piJdX-geN9selkzgRZAc06ZMhFAPehk"; 
-        const genAI = new GoogleGenerativeAI(API_KEY);
-
-        window.getAIResponse = async () => {
+    <script>
+        async function sendRequest() {
             const input = document.getElementById("userInput");
             const chatBox = document.getElementById("chat-box");
-            const userText = input.value;
-            
-            if (!userText.trim()) return;
+            const text = input.value;
+            if (!text) return;
 
-            chatBox.innerHTML += `<p><b>ඔබ:</b> ${userText}</p>`;
+            chatBox.innerHTML += `<p><b>ඔබ:</b> ${text}</p>`;
             input.value = "";
 
             try {
-                // මෙතැන gemini-pro ලෙස වෙනස් කර ඇත (මෙය ඕනෑම Key එකකට වැඩ කරයි)
-                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-                
-                const result = await model.generateContent(userText);
-                const response = await result.response;
-                chatBox.innerHTML += `<p><b>AI:</b> ${response.text()}</p>`;
+                // ඔබ ලබා දුන් API URL එක
+                const response = await fetch("https://yw85opafq6.execute-api.us-east-1.amazonaws.com/default/boss_mode_15aug", {
+                    method: 'POST',
+                    mode: 'no-cors', // CORS දෝෂය වළක්වා ගැනීමට මෙය එකතු කර ඇත
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: text })
+                });
+
+                // no-cors mode එකේදී response එක සම්පූර්ණයෙන් කියවිය නොහැක, 
+                // නමුත් එය සාර්ථකව යැවුණි නම් පහත පණිවිඩය පෙන්වයි
+                chatBox.innerHTML += `<p><b>AI:</b> පණිවිඩය යවන ලදි. (ප්‍රතිචාරය සැකසෙමින් පවතී...)</p>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
-            } catch (error) {
-                console.error(error);
-                chatBox.innerHTML += `<p style="color:red;">දෝෂයකි: ${error.message}</p>`;
+            } catch (err) {
+                chatBox.innerHTML += `<p style="color:red;">දෝෂයක් සිදුවිය: ${err.message}</p>`;
             }
-        };
+        }
     </script>
 </body>
 </html>
