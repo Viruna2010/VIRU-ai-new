@@ -1,44 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Taxila AI | Official</title>
-    <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; }
-        .container { background: #1e293b; padding: 25px; border-radius: 12px; width: 350px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
-        button { width: 100%; padding: 10px; background: #38bdf8; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        #res { margin-top: 15px; color: #cbd5e1; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Taxila AI</h2>
-        <input type="text" id="userInput" placeholder="ප්‍රශ්නයක් අහන්න...">
-        <button onclick="askTaxila()">Submit</button>
-        <div id="res">Taxila සූදානම්...</div>
-    </div>
+export default async function handler(req, res) {
+    // 1. CORS Headers එකතු කිරීම (මේක තමයි අත්‍යවශ්‍යම දේ)
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    <script>
-        async function askTaxila() {
-            const input = document.getElementById('userInput').value;
-            const resDiv = document.getElementById('res');
-            resDiv.innerText = "Taxila සිතමින් සිටී...";
+    // OPTIONS request එකක් ආවොත් කෙලින්ම යවන්න
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
 
-            try {
-                // මෙන්න මෙතන තියෙන්නේ අපේ API ලින්ක් එක
-                const response = await fetch('https://api-sand-six-30.vercel.app/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: input })
-                });
-                
-                const data = await response.json();
-                resDiv.innerText = data.reply || "උත්තරයක් නැත.";
-            } catch (err) {
-                resDiv.innerText = "Error: API එක වැඩ නැත.";
-            }
-        }
-    </script>
-</body>
-</html>
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    const { message } = req.body;
+
+    try {
+        const response = await fetch('https://yw85opafq6.execute-api.us-east-1.amazonaws.com/default/boss_mode_15aug', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+        });
+
+        const data = await response.json();
+        return res.status(200).json({ 
+            bot: "Taxila", 
+            reply: data.reply || "මම ටැක්සිලා, උත්තරයක් සෙවිය නොහැක." 
+        });
+    } catch (error) {
+        return res.status(500).json({ error: "Connection failed" });
+    }
+}
