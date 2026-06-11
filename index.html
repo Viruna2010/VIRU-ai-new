@@ -1,42 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Taxila AI | Official</title>
-    <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; }
-        .container { background: #1e293b; padding: 25px; border-radius: 12px; width: 350px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
-        button { width: 100%; padding: 10px; background: #38bdf8; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        #res { margin-top: 15px; color: #cbd5e1; }
-    </style>
-</head>
 <body>
-    <div class="container">
-        <h2>Taxila AI</h2>
-        <input type="text" id="userInput" placeholder="ප්‍රශ්නයක් අහන්න...">
-        <button onclick="askTaxila()">Submit</button>
-        <div id="res">Taxila සූදානම්...</div>
+    <div style="text-align: center; margin-top: 50px;">
+        <h2>Taxila AI Assistant</h2>
+        <input type="text" id="promptInput" placeholder="ප්‍රශ්නයක් අහන්න...">
+        <button onclick="getTaxilaResponse()">Send</button>
+        <div id="result" style="margin-top: 20px; font-weight: bold;"></div>
     </div>
 
     <script>
-        async function askTaxila() {
-            const input = document.getElementById('userInput').value;
-            const resDiv = document.getElementById('res');
-            resDiv.innerText = "Taxila සිතමින් සිටී...";
+        async function getTaxilaResponse() {
+            const prompt = document.getElementById('promptInput').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerText = "Taxila පිළිතුරු සපයයි...";
+
+            // API එකට යවන ලින්ක් එක (prompt එක URL එකට දාලා)
+            const apiUrl = `https://api-sand-six-30.vercel.app/api/chat?prompt=${encodeURIComponent(prompt)}`;
 
             try {
-                // මෙන්න මෙතන තියෙන්නේ අපේ API ලින්ක් එක
-                const response = await fetch('https://api-sand-six-30.vercel.app/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: input })
-                });
-                
+                const response = await fetch(apiUrl);
                 const data = await response.json();
-                resDiv.innerText = data.reply || "උත්තරයක් නැත.";
-            } catch (err) {
-                resDiv.innerText = "Error: API එක වැඩ නැත.";
+                
+                // API එකෙන් එන 'reply' කියන කොටස විතරක් පෙන්නනවා
+                resultDiv.innerText = data.reply;
+            } catch (error) {
+                resultDiv.innerText = "Error: API එකෙන් උත්තරයක් ආවේ නෑ.";
             }
         }
     </script>
