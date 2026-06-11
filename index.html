@@ -6,9 +6,9 @@
     <title>Gemini AI Chat</title>
     <style>
         body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 10px; }
-        #chat-box { height: 300px; border: 1px solid #ccc; overflow-y: scroll; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
-        input { width: 75%; padding: 10px; }
-        button { padding: 10px; cursor: pointer; }
+        #chat-box { height: 350px; border: 1px solid #ccc; overflow-y: scroll; padding: 10px; margin-bottom: 10px; border-radius: 8px; background-color: #f9f9f9; }
+        input { width: 70%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 15px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -21,7 +21,7 @@
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai";
 
-        // ඔබේ API Key එක
+        // ඔබේ API Key එක මෙතැනට දමන්න
         const API_KEY = "AIzaSyB3piJdX-geN9selkzgRZAc06ZMhFAPehk"; 
         const genAI = new GoogleGenerativeAI(API_KEY);
 
@@ -36,8 +36,9 @@
             input.value = "";
 
             try {
-                // Model එක "gemini-1.5-flash" ලෙස තබා ඇත
-                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                // මෙතැන gemini-pro ලෙස වෙනස් කර ඇත (මෙය ඕනෑම Key එකකට වැඩ කරයි)
+                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+                
                 const result = await model.generateContent(userText);
                 const response = await result.response;
                 chatBox.innerHTML += `<p><b>AI:</b> ${response.text()}</p>`;
